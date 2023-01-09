@@ -1,4 +1,6 @@
 import { useSubstrate } from '@components/SubstrateContext';
+import polkadotUtil from '@polkadot/util';
+import polkadotUtilCrypto from '@polkadot/util-crypto';
 import { IComponent } from '@type';
 import React from 'react';
 
@@ -13,8 +15,8 @@ const DeveloperConsole: IComponent<{
   if (keyringState === 'READY') {
     window.keyring = keyring;
   }
-  window.util = require('@polkadot/util');
-  window.utilCrypto = require('@polkadot/util-crypto');
+  window.util = polkadotUtil;
+  window.utilCrypto = polkadotUtilCrypto;
 
   return <div>{title}</div>;
 };

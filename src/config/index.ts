@@ -1,7 +1,7 @@
 import configCommon from './common';
 import developmentConfig from './development';
 import productionConfig from './production';
-import testConfig from './test';
+import testConfig from './testConfig';
 
 let configEnv = null;
 switch (process.env.NODE_ENV) {
