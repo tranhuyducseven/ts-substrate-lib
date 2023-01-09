@@ -22,13 +22,13 @@
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
-      "@config": ["./src/config.ts"],
+      "@config": ["./src/config/index.ts"],
+      "@atoms/*": ["./src/states/atoms/*"],
       "@type": ["./src/global.types.ts"],
       "@components/*": ["./src/components/*"],
       "@constants/*": ["./src/constants/*"],
       "@utils/*": ["./src/utils/*"],
       "@styles/*": ["./src/styles/*"],
-      "@hooks/*": ["./src/hooks/*"],
       "@assets/*": ["./src/assets/*"]
     },
     "plugins": [{ "name": "typescript-plugin-css-modules" }]

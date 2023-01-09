@@ -1,7 +1,7 @@
 {
-  "name": "@devin/lib-ui-template",
+  "name": "@tranhuyducseven/ts-substrate-lib",
   "version": "0.0.1",
-  "description": "ReactUI library by @devin",
+  "description": "Substrate Frontend Library Using TypeScript",
   "main": "build/index.js",
   "module": "build/index.es.js",
   "jsnext:main": "build/index.es.js",
@@ -114,6 +114,13 @@
     "build"
   ],
   "dependencies": {
-    "classnames": "^2.3.1"
+    "@polkadot/api": "^9.11.1",
+    "@polkadot/extension-dapp": "^0.44.8",
+    "@polkadot/jsonrpc": "^1.7.1",
+    "@polkadot/keyring": "^10.2.3",
+    "@polkadot/types": "^9.11.1",
+    "@polkadot/ui-keyring": "^2.9.15",
+    "classnames": "^2.3.1",
+    "recoil": "^0.7.6"
   }
 }
