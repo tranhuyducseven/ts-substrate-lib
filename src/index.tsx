@@ -1,7 +1,6 @@
 /**
  * Overriding scss and add our feature here
  */
-import './styles/index.scss';
 
 /**
  * Export default

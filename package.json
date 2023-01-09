@@ -34,11 +34,12 @@
   "homepage": "https://github.com/tranhuyducseven/ts-substrate-lib#readme",
   "devDependencies": {
     "@babel/core": "^7.17.0",
-    "@storybook/react": "^6.1.21",
     "@lopatnov/rollup-plugin-uglify": "github:lopatnov/rollup-plugin-uglify",
+    "@rollup/plugin-json": "^6.0.0",
     "@storybook/addon-essentials": "^6.4.18",
     "@storybook/addon-links": "^6.4.18",
     "@storybook/builder-vite": "^0.2.2",
+    "@storybook/react": "^6.1.21",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^13.4.0",
     "@types/classnames": "^2.3.1",
@@ -112,12 +113,17 @@
     "build"
   ],
   "dependencies": {
-    "@polkadot/api": "^9.11.1",
-    "@polkadot/extension-dapp": "^0.44.8",
-    "@polkadot/keyring": "^10.2.3",
-    "@polkadot/types": "^9.11.1",
-    "@polkadot/ui-keyring": "^2.9.15",
+    "@polkadot/api": "^7.10.1",
+    "@polkadot/extension-dapp": "^0.42.7",
+    "@polkadot/keyring": "^8.4.1",
+    "@polkadot/networks": "^8.4.1",
+    "@polkadot/types": "^7.10.1",
+    "@polkadot/ui-keyring": "^1.1.1",
+    "@polkadot/ui-settings": "^1.1.1",
+    "@polkadot/util": "^8.4.1",
+    "@polkadot/util-crypto": "^8.4.1",
     "classnames": "^2.3.1",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "recoil": "^0.7.6"
   }
 }

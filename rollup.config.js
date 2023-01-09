@@ -1,3 +1,4 @@
+import json from '@rollup/plugin-json';
 import autoprefixer from 'autoprefixer';
 import path from 'path';
 import csso from 'postcss-csso';
@@ -74,6 +75,7 @@ export default [
         },
       }),
       progress(),
+      json(),
     ],
   },
 ];
