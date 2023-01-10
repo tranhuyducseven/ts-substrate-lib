@@ -1,6 +1,6 @@
 {
   "name": "ts-substrate-lib",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Substrate Frontend Library Using TypeScript",
   "main": "build/index.js",
   "module": "build/index.es.js",
@@ -16,7 +16,8 @@
     "format:staged": "pretty-quick --staged",
     "prepare": "husky install",
     "storybook": "yarn dev",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "compact": "yarn build && np"
   },
   "repository": {
     "type": "git",
