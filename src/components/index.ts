@@ -1,4 +1,2 @@
-import DeveloperConsole from './DeveloperConsole';
-import SubstrateContext from './SubstrateContext';
-
-export { DeveloperConsole,SubstrateContext };
+export * from './DeveloperConsole';
+export * from './SubstrateContext';
