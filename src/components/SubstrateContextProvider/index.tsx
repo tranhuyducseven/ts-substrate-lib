@@ -1,13 +1,14 @@
 import { config } from '@config';
-import { API_EVENTS } from '@constants/index';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { TypeRegistry } from '@polkadot/types/create';
 import { keyring as Keyring } from '@polkadot/ui-keyring';
 import { isTestChain } from '@polkadot/util';
-import { initialSubstrateState, useSubstrateStore } from '@states/app';
 import { IComponent, ISubstrateContext } from '@type';
 import React, { useCallback, useContext, useEffect } from 'react';
+
+import { API_EVENTS } from '../../constants';
+import { initialSubstrateState, useSubstrateStore } from '../../states/app';
 
 const registry = new TypeRegistry();
 

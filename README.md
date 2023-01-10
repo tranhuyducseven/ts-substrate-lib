@@ -45,8 +45,8 @@ interface ISubstrateContext {
 
 3. Place the `<SubstrateContext />` component at the first level:
 
-```
-<SubstrateContext>
-  <MainApp />
-</SubstrateContext>
+```ts
+<SubstrateContextProvider>
+  <MainLayout>{getLayout(<PageContent {...pageProps} />)}</MainLayout>;
+</SubstrateContextProvider>
 ```
