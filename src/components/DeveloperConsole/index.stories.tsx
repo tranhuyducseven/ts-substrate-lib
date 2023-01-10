@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import * as React from 'react';
 
-import DeveloperConsole from '.';
+import { DeveloperConsole } from '.';
 
 export default {
   title: 'DeveloperConsole',

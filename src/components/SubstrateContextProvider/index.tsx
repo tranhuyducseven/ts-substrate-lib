@@ -24,7 +24,7 @@ const SubstrateContext = React.createContext<ISubstrateContextProviderProps>({
   setSubstrateAccount: undefined,
 });
 
-const SubstrateContextProvider: IComponent<{
+export const SubstrateContextProvider: IComponent<{
   socket?: string;
 }> = (props) => {
   const [substrateContext, setSubstrateContext] = useRecoilState(SubstrateContextAtom);
@@ -110,6 +110,4 @@ const SubstrateContextProvider: IComponent<{
   );
 };
 
-const useSubstrate = () => useContext(SubstrateContext);
-export { useSubstrate };
-export default SubstrateContextProvider;
+export const useSubstrate = () => useContext(SubstrateContext);

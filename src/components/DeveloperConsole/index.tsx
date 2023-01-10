@@ -1,8 +1,9 @@
-import { useSubstrate } from '@components/SubstrateContext';
 import { IComponent } from '@type';
 import React from 'react';
 
-const DeveloperConsole: IComponent<{
+import { useSubstrate } from '..';
+
+export const DeveloperConsole: IComponent<{
   title?: string;
 }> = ({ title }) => {
   const substrateProvider = useSubstrate();
@@ -18,4 +19,3 @@ const DeveloperConsole: IComponent<{
 
   return <div>{title}</div>;
 };
-export default DeveloperConsole;

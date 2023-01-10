@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import DeveloperConsole from '.';
+import { DeveloperConsole } from '.';
 
 describe('Test Template', () => {
   test('Should render title', () => {

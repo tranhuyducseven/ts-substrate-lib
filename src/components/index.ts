@@ -1,2 +1,2 @@
 export * from './DeveloperConsole';
-export * from './SubstrateContext';
+export * from './SubstrateContextProvider';
