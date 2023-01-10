@@ -1,4 +1,3 @@
-import { SubstrateContextAtom } from '@atoms/app';
 import { config } from '@config';
 import { API_EVENTS } from '@constants/index';
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -6,9 +5,9 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { TypeRegistry } from '@polkadot/types/create';
 import { keyring as Keyring } from '@polkadot/ui-keyring';
 import { isTestChain } from '@polkadot/util';
+import { initialSubstrateState, useSubstrateStore } from '@states/app';
 import { IComponent, ISubstrateContext } from '@type';
 import React, { useCallback, useContext, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 
 const registry = new TypeRegistry();
 
@@ -18,22 +17,33 @@ interface ISubstrateContextProviderProps {
   substrateState: ISubstrateContext;
   setSubstrateAccount?: (acc: string) => void;
 }
+const initialSubstrateStateContextProvider = { ...initialSubstrateState };
 
 const SubstrateContext = React.createContext<ISubstrateContextProviderProps>({
-  substrateState: {},
+  substrateState: initialSubstrateStateContextProvider,
   setSubstrateAccount: undefined,
 });
 
 export const SubstrateContextProvider: IComponent<{
   socket?: string;
 }> = (props) => {
-  const [substrateContext, setSubstrateContext] = useRecoilState(SubstrateContextAtom);
+  const {
+    substrateState,
+    handleConnectInit,
+    handleConnect,
+    handleConnectSuccess,
+    handleConnectError,
+    handleLoadKeyring,
+    handleSetKeyring,
+    handleKeyringError,
+    handleSetCurrentAccount,
+  } = useSubstrateStore();
 
   const connectToOffChain = useCallback(() => {
-    const { apiState, socket, jsonrpc } = substrateContext;
+    const { apiState, socket, jsonrpc } = substrateState;
     // We only want this function to be performed once
     if (apiState) return;
-    setSubstrateContext((prev) => ({ ...prev, apiState: 'CONNECT_INIT' }));
+    handleConnectInit();
 
     console.log(`Connected socket: ${socket}`);
     const provider = new WsProvider(socket);
@@ -41,12 +51,12 @@ export const SubstrateContextProvider: IComponent<{
 
     // Set listeners for disconnection and reconnection event.
     _api.on(API_EVENTS.CONNECTED, () => {
-      setSubstrateContext((prev) => ({ ...prev, api: _api, apiState: 'CONNECTING' }));
-      _api.isReady.then(() => setSubstrateContext((prev) => ({ ...prev, apiState: 'READY' })));
+      handleConnect(_api);
+      _api.isReady.then(() => handleConnectSuccess());
     });
-    _api.on(API_EVENTS.READY, () => setSubstrateContext((prev) => ({ ...prev, apiState: 'READY' })));
-    _api.on(API_EVENTS.ERROR, (err) => setSubstrateContext((prev) => ({ ...prev, apiState: 'ERROR', apiError: err })));
-  }, [substrateContext]);
+    _api.on(API_EVENTS.READY, () => handleConnectSuccess());
+    _api.on(API_EVENTS.ERROR, (err) => handleConnectError(err));
+  }, [substrateState]);
 
   const retrieveChainInfo = useCallback(async (api: any) => {
     const [systemChain, systemChainType] = await Promise.all([
@@ -61,8 +71,8 @@ export const SubstrateContextProvider: IComponent<{
   }, []);
 
   const loadAccounts = useCallback(() => {
-    const { api } = substrateContext;
-    setSubstrateContext((prev) => ({ ...prev, keyringState: 'LOADING' }));
+    const { api } = substrateState;
+    handleLoadKeyring();
     const asyncLoadAccounts = async () => {
       try {
         await web3Enable(config.APP_NAME);
@@ -78,10 +88,11 @@ export const SubstrateContextProvider: IComponent<{
         const isDevelopment = systemChainType.isDevelopment || systemChainType.isLocal || isTestChain(systemChain);
 
         Keyring.loadAll({ isDevelopment }, allAccounts);
-        setSubstrateContext((prev) => ({ ...prev, keyringState: 'READY', keyring: Keyring }));
+        // setSubstrateContext((prev) => ({ ...prev, keyringState: 'READY', keyring: Keyring }));
+        handleSetKeyring(Keyring);
       } catch (e) {
         console.error(e);
-        setSubstrateContext((prev) => ({ ...prev, keyringState: 'ERROR', keyring: null }));
+        handleKeyringError();
       }
     };
     asyncLoadAccounts();
@@ -92,19 +103,19 @@ export const SubstrateContextProvider: IComponent<{
   }, [connectToOffChain]);
 
   useEffect(() => {
-    const { apiState, keyringState } = substrateContext;
+    const { apiState, keyringState } = substrateState;
     if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
       keyringLoadAll = true;
       loadAccounts();
     }
-  }, [substrateContext]);
+  }, [substrateState]);
 
   const setCurrentAccount = (account: string) => {
-    setSubstrateContext((prev) => ({ ...prev, currentAccount: account }));
+    handleSetCurrentAccount(account);
   };
 
   return (
-    <SubstrateContext.Provider value={{ substrateState: substrateContext, setSubstrateAccount: setCurrentAccount }}>
+    <SubstrateContext.Provider value={{ substrateState, setSubstrateAccount: setCurrentAccount }}>
       {props.children}
     </SubstrateContext.Provider>
   );

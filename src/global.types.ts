@@ -2,15 +2,18 @@
  * This file contain all global type across library
  */
 
+import { ApiPromise } from '@polkadot/api';
+import { Keyring } from '@polkadot/ui-keyring';
+
 export interface ISubstrateContext {
-  socket?: string;
-  jsonrpc?: any;
-  keyring?: any;
-  keyringState?: string | null;
-  api?: any;
-  apiError?: any;
-  apiState?: string | null;
-  currentAccount?: any;
+  socket: string;
+  jsonrpc: any;
+  keyring: Keyring | null;
+  keyringState: string | null;
+  api: ApiPromise | null;
+  apiError: any;
+  apiState: string;
+  currentAccount: any;
 }
 
 declare global {

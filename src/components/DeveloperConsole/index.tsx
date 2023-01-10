@@ -6,8 +6,7 @@ import { useSubstrate } from '..';
 export const DeveloperConsole: IComponent<{
   title?: string;
 }> = ({ title }) => {
-  const substrateProvider = useSubstrate();
-  const { api, apiState, keyring, keyringState } = substrateProvider?.substrateState;
+  const { api, apiState, keyring, keyringState } = useSubstrate()?.substrateState;
   if (apiState === 'READY') {
     window.api = api;
   }

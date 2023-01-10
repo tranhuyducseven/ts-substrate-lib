@@ -121,6 +121,6 @@
     "@polkadot/util-crypto": "^8.4.1",
     "classnames": "^2.3.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "recoil": "^0.7.6"
+    "zustand": "^4.3.1"
   }
 }

@@ -19,17 +19,17 @@
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "esModuleInterop": true,
-    "baseUrl": ".",
-    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "baseUrl": "./",
+    "typeRoots": ["./node_modules/@types", "./src/global.types.ts"],
     "paths": {
-      "@config": ["./src/config/index.ts"],
-      "@atoms/*": ["./src/states/atoms/*"],
-      "@type": ["./src/global.types.ts"],
-      "@components/*": ["./src/components/*"],
-      "@constants/*": ["./src/constants/*"]
+      "@config": ["src/config/index.ts"],
+      "@states/*": ["src/states/*"],
+      "@type": ["src/global.types.ts"],
+      "@components/*": ["src/components/*"],
+      "@constants/*": ["src/constants/*"]
     },
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": ["src/**/*", "src/types"],
+  "include": ["./src/**/*", "./src/**/*.ts", "./src/**/*.tsx", "src/global.types.ts"],
   "exclude": ["node_modules", "build"]
 }
