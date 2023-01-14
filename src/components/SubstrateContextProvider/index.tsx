@@ -1,35 +1,21 @@
-import { config } from '@config';
+import { configs } from '@configs/index';
+import { API_EVENTS } from '@constants/index';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import { TypeRegistry } from '@polkadot/types/create';
+import { TypeRegistry } from '@polkadot/types';
 import { keyring as Keyring } from '@polkadot/ui-keyring';
 import { isTestChain } from '@polkadot/util';
-import { IComponent, ISubstrateContext } from '@type';
-import React, { useCallback, useContext, useEffect } from 'react';
-
-import { API_EVENTS } from '../../constants';
-import { initialSubstrateState, useSubstrateStore } from '../../states/app';
+import { useSubstrateStore } from '@states/app';
+import { IComponent } from '@types';
+import React, { useEffect } from 'react';
 
 const registry = new TypeRegistry();
-
 let keyringLoadAll = false;
 
-interface ISubstrateContextProviderProps {
-  substrateState: ISubstrateContext;
-  setSubstrateAccount?: (acc: string) => void;
-}
-const initialSubstrateStateContextProvider = { ...initialSubstrateState };
-
-const SubstrateContext = React.createContext<ISubstrateContextProviderProps>({
-  substrateState: initialSubstrateStateContextProvider,
-  setSubstrateAccount: undefined,
-});
-
-export const SubstrateContextProvider: IComponent<{
-  socket?: string;
-}> = (props) => {
+export const SubstrateContextProvider: IComponent = ({ children }) => {
   const {
     substrateState,
+    setSocket,
     handleConnectInit,
     handleConnect,
     handleConnectSuccess,
@@ -37,29 +23,29 @@ export const SubstrateContextProvider: IComponent<{
     handleLoadKeyring,
     handleSetKeyring,
     handleKeyringError,
-    handleSetCurrentAccount,
   } = useSubstrateStore();
-
-  const connectToOffChain = useCallback(() => {
-    const { apiState, socket, jsonrpc } = substrateState;
+  const { api, apiState, socket, jsonrpc, keyringState } = substrateState;
+  const connectToOffChain = () => {
     // We only want this function to be performed once
-    if (apiState) return;
-    handleConnectInit();
+    if (socket !== '') {
+      if (apiState) return;
+      handleConnectInit();
 
-    console.log(`Connected socket: ${socket}`);
-    const provider = new WsProvider(socket);
-    const _api = new ApiPromise({ provider, rpc: jsonrpc });
+      const provider = new WsProvider(socket);
+      const _api = new ApiPromise({ provider, rpc: jsonrpc });
 
-    // Set listeners for disconnection and reconnection event.
-    _api.on(API_EVENTS.CONNECTED, () => {
-      handleConnect(_api);
-      _api.isReady.then(() => handleConnectSuccess());
-    });
-    _api.on(API_EVENTS.READY, () => handleConnectSuccess());
-    _api.on(API_EVENTS.ERROR, (err) => handleConnectError(err));
-  }, [substrateState]);
+      // Set listeners for disconnection and reconnection event.
+      _api.on(API_EVENTS.CONNECTED, () => {
+        console.log(`Connected socket: ${socket}`);
+        handleConnect(_api);
+        _api.isReady.then(() => handleConnectSuccess());
+      });
+      _api.on(API_EVENTS.READY, () => handleConnectSuccess());
+      _api.on(API_EVENTS.ERROR, (err: any) => handleConnectError(err));
+    }
+  };
 
-  const retrieveChainInfo = useCallback(async (api: any) => {
+  const retrieveChainInfo = async (api: any) => {
     const [systemChain, systemChainType] = await Promise.all([
       api.rpc.system.chain(),
       api.rpc.system.chainType ? api.rpc.system.chainType() : Promise.resolve(registry.createType('ChainType', 'Live')),
@@ -69,27 +55,27 @@ export const SubstrateContextProvider: IComponent<{
       systemChain: (systemChain || '<unknown>').toString(),
       systemChainType,
     };
-  }, []);
-
-  const loadAccounts = useCallback(() => {
-    const { api } = substrateState;
+  };
+  const loadAccounts = () => {
     handleLoadKeyring();
     const asyncLoadAccounts = async () => {
       try {
-        await web3Enable(config.APP_NAME);
+        await web3Enable(configs.APP_NAME);
         let allAccounts = await web3Accounts();
-
-        allAccounts = allAccounts.map(({ address, meta }) => ({
-          address,
-          meta: { ...meta, name: `${meta.name} (${meta.source})` },
-        }));
+        allAccounts = allAccounts.map((account: any) => {
+          const address: any = account.address;
+          const meta: any = account.meta;
+          return {
+            address,
+            meta: { ...meta, name: `${meta.name} (${meta.source})` },
+          };
+        });
 
         // Logics to check if the connecting chain is a dev chain
         const { systemChain, systemChainType } = await retrieveChainInfo(api);
         const isDevelopment = systemChainType.isDevelopment || systemChainType.isLocal || isTestChain(systemChain);
 
         Keyring.loadAll({ isDevelopment }, allAccounts);
-        // setSubstrateContext((prev) => ({ ...prev, keyringState: 'READY', keyring: Keyring }));
         handleSetKeyring(Keyring);
       } catch (e) {
         console.error(e);
@@ -97,29 +83,22 @@ export const SubstrateContextProvider: IComponent<{
       }
     };
     asyncLoadAccounts();
-  }, []);
+  };
 
   useEffect(() => {
-    connectToOffChain();
-  }, [connectToOffChain]);
-
+    if (typeof window !== 'undefined') {
+      const parsedQuery = new URLSearchParams(window?.location.search);
+      const connectedSocket = parsedQuery?.get('rpc') || configs.PROVIDER_SOCKET;
+      setSocket(connectedSocket);
+      connectToOffChain();
+    }
+  }, [window, socket]);
   useEffect(() => {
-    const { apiState, keyringState } = substrateState;
     if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
       keyringLoadAll = true;
       loadAccounts();
     }
-  }, [substrateState]);
+  }, [apiState, keyringState]);
 
-  const setCurrentAccount = (account: string) => {
-    handleSetCurrentAccount(account);
-  };
-
-  return (
-    <SubstrateContext.Provider value={{ substrateState, setSubstrateAccount: setCurrentAccount }}>
-      {props.children}
-    </SubstrateContext.Provider>
-  );
+  return <div>{children}</div>;
 };
-
-export const useSubstrate = () => useContext(SubstrateContext);

@@ -1,5 +1,5 @@
 const commonConfig = {
-  APP_NAME: 'substrate-front-end-template',
+  APP_NAME: 'ts-substrate-lib',
   CUSTOM_RPC_METHODS: {},
 };
 

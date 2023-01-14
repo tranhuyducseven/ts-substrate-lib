@@ -1,14 +1,13 @@
-import { config } from '@config';
+import { configs } from '@configs/index';
+import { ApiPromise } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { Keyring } from '@polkadot/ui-keyring';
-import { ISubstrateContext } from '@type';
+import { ISubstrateContext } from '@types';
 import { create } from 'zustand';
-
-const parsedQuery = new URLSearchParams(window.location.search);
-const connectedSocket = parsedQuery.get('rpc') || config.PROVIDER_SOCKET;
 
 interface ISubstrateStore {
   substrateState: ISubstrateContext;
+  setSocket: (socket: string) => void;
   handleConnectInit: () => void;
   handleConnect: (api: any) => void;
   handleConnectSuccess: () => void;
@@ -19,8 +18,8 @@ interface ISubstrateStore {
   handleSetCurrentAccount: (currentAccount: any) => void;
 }
 export const initialSubstrateState: ISubstrateContext = {
-  socket: connectedSocket,
-  jsonrpc: { ...jsonrpc, ...config.CUSTOM_RPC_METHODS },
+  socket: '',
+  jsonrpc: { ...jsonrpc, ...configs.CUSTOM_RPC_METHODS },
   keyring: null,
   keyringState: '',
   api: null,
@@ -31,14 +30,48 @@ export const initialSubstrateState: ISubstrateContext = {
 
 const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
   substrateState: initialSubstrateState,
-  handleConnectInit: () => set({ substrateState: { ...get().substrateState, apiState: 'CONNECT_INIT' } }),
-  handleConnect: (api) => set({ substrateState: { ...get().substrateState, apiState: 'CONNECTING', api } }),
+  setSocket: (socket: string) => {
+    set({ substrateState: { ...get().substrateState, socket } });
+  },
+  handleConnectInit: () =>
+    set({
+      substrateState: { ...get().substrateState, apiState: 'CONNECT_INIT' },
+    }),
+  handleConnect: (api: ApiPromise) =>
+    set({
+      substrateState: { ...get().substrateState, apiState: 'CONNECTING', api },
+    }),
   handleConnectSuccess: () => set({ substrateState: { ...get().substrateState, apiState: 'READY' } }),
-  handleConnectError: (err) => set({ substrateState: { ...get().substrateState, apiState: 'ERROR', apiError: err } }),
-  handleLoadKeyring: () => set({ substrateState: { ...get().substrateState, keyringState: 'LOADING' } }),
-  handleSetKeyring: (keyring) => set({ substrateState: { ...get().substrateState, keyringState: 'READY', keyring } }),
-  handleKeyringError: () => set({ substrateState: { ...get().substrateState, keyringState: 'ERROR', keyring: null } }),
-  handleSetCurrentAccount: (currentAccount) => set({ substrateState: { ...get().substrateState, currentAccount } }),
+  handleConnectError: (err: any) =>
+    set({
+      substrateState: {
+        ...get().substrateState,
+        apiState: 'ERROR',
+        apiError: err,
+      },
+    }),
+  handleLoadKeyring: () =>
+    set({
+      substrateState: { ...get().substrateState, keyringState: 'LOADING' },
+    }),
+  handleSetKeyring: (keyring: Keyring) =>
+    set({
+      substrateState: {
+        ...get().substrateState,
+        keyringState: 'READY',
+        keyring,
+      },
+    }),
+  handleKeyringError: () =>
+    set({
+      substrateState: {
+        ...get().substrateState,
+        keyringState: 'ERROR',
+        keyring: null,
+      },
+    }),
+  handleSetCurrentAccount: (currentAccount: any) =>
+    set({ substrateState: { ...get().substrateState, currentAccount } }),
 }));
 
 export { useSubstrateStore };

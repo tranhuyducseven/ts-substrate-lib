@@ -41,7 +41,9 @@ export default [
         autoModules: true,
         plugins: [atImport(), autoprefixer(), csso()],
       }),
-      external(),
+      external({
+        includeDependencies: true,
+      }),
       resolve(),
       typescript({
         exclude: ['**/__tests__/**', '__Template'],
@@ -61,8 +63,12 @@ export default [
         namedExports: {
           'node_modules/react/react.js': ['Children', 'Component', 'PropTypes', 'createElement'],
           'node_modules/react-dom/index.js': ['render'],
-          'node_modules/recharts/node_modules/react-is/index.js': ['isFragment'],
-          'node_modules/react-date-range/dist/index.js': ['Calendar', 'DateRangePicker'],
+          'node_modules/@polkadot/api': ['ApiPromise', ' WsProvider'],
+          'node_modules/@polkadot/extension-dapp': ['web3Accounts', 'web3Enable'],
+          'node_modules/@polkadot/types': ['TypeRegistry'],
+          'node_modules/@polkadot/ui-keyring': ['keyring'],
+          'node_modules/@polkadot/util': ['isTestChain'],
+          'node_modules/@polkadot/util': ['isTestChain'],
         },
       }),
       terser({
