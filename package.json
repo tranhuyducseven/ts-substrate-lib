@@ -1,6 +1,6 @@
 {
   "name": "ts-substrate-lib",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Substrate Frontend Library Using TypeScript",
   "main": "build/index.js",
   "module": "build/index.es.js",
@@ -34,7 +34,6 @@
     "@faker-js/faker": "^7.6.0",
     "@lopatnov/rollup-plugin-uglify": "github:lopatnov/rollup-plugin-uglify",
     "@polkadot/api": "^9.11.2",
-    "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/keyring": "^10.2.6",
     "@polkadot/networks": "^8.4.1",
     "@polkadot/types": "^9.11.2",
@@ -110,11 +109,10 @@
     "typescript-plugin-css-modules": "^4.1.1",
     "typescript-transform-paths": "^3.4.6",
     "vite": "^4.0.4",
-    "zustand": "^4.3.1"
+    "zustand": "^4.3.2"
   },
   "peerDependencies": {
     "@polkadot/api": "^9.11.2",
-    "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/keyring": "^10.2.6",
     "@polkadot/networks": "^8.4.1",
     "@polkadot/types": "^9.11.2",
@@ -137,5 +135,7 @@
   "files": [
     "build"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "@polkadot/extension-dapp": "^0.44.8"
+  }
 }
