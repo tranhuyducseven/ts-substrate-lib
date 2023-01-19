@@ -21,7 +21,7 @@
 1. SubstrateState's interface:
 
 ```ts
-interface ISubstrateContext {
+interface ISubstrateConnection {
   socket?: string;
   jsonrpc?: any;
   keyring?: any;
@@ -36,34 +36,53 @@ interface ISubstrateContext {
 2.
 
 ```ts
-  useSubstrate = () =>
+  useSubstrateConnection = () =>
   {
-    substrateState: ISubstrateContext;
-    setSubstrateAccount?: (acc: string) => void;
-  } : ISubstrateContextProviderProps
+    substrateConnection: ISubstrateConnection;
+    setSubstrateAccount?: (acc: any) => void;
+  } : ISubstrateContextProps
 ```
 
-3. Place the `<SubstrateContext />` component at the first level:
+3. Place the `<SubstrateConnectionLayout />` component at the first level:
 
 ```ts
-const SubstrateContextProvider = dynamic(
+const SubstrateConnectionLayout = dynamic(
   () =>
-    import("@components/SubstrateContextProvider").then(
-      (data) => data.SubstrateContextProvider
+    import("ts-substrate-lib").then(
+      (data) => data.SubstrateConnectionLayout
     ),
   {
     ssr: false,
+    loading: ()=> <></>
   }
 );
 
 ...
 
-<SubstrateContextProvider>
+<SubstrateConnectionLayout>
   <MainLayout>{getLayout(<PageContent {...pageProps} />)}</MainLayout>;
-</SubstrateContextProvider>
+</SubstrateConnectionLayout>
 ```
 
-4. Dependencies
+4. With the screen use `useSubstrateConnection()` hook, it's necessary to dynamic import
+
+```ts
+import { ScreenLayout } from '@layouts/ScreenLayout';
+import dynamic from 'next/dynamic';
+const AppScreen = dynamic(() => import('@screens/app').then((data) => data.AppScreen), {
+  ssr: false,
+});
+
+const App: IPageComponent = () => {
+  return <AppScreen />;
+};
+
+App.getLayout = (screen) => <ScreenLayout>{screen}</ScreenLayout>;
+
+export default App;
+```
+
+5. Dependencies
 
 ```json
     "@polkadot/api": "^9.11.2",
