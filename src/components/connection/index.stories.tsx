@@ -2,12 +2,12 @@ import { Meta, Story } from '@storybook/react';
 import { IComponent } from '@types';
 import * as React from 'react';
 
-import { SubstrateProvider } from './SubstrateProvider';
+import { SubstrateConnectionLayout } from './SubstrateConnectionLayout';
 import { useSubstrateConnection } from './useSubstrateConnection';
 
 export default {
   title: 'Table',
-  component: SubstrateProvider,
+  component: SubstrateConnectionLayout,
 } as Meta;
 
 export const Children: IComponent = () => {
@@ -25,8 +25,8 @@ export const Children: IComponent = () => {
 };
 
 export const TemplateDemo: Story = (args) => (
-  <SubstrateProvider {...args}>
+  <SubstrateConnectionLayout {...args}>
     <Children />
-  </SubstrateProvider>
+  </SubstrateConnectionLayout>
 );
 TemplateDemo.args = {};
