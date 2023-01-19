@@ -96,3 +96,29 @@ export default App;
     "@polkadot/util-crypto": "^10.2.6",
     "zustand": "^4.3.1",
 ```
+
+6. Config env
+
+```ts
+interface ISubstrateConfigs {
+  providerSocket?: string;
+  appName?: string;
+  customRpcMethods?: {};
+}
+...
+export const TemplateDemo: Story = (args) => {
+  const configs: ISubstrateConfigs = {
+    providerSocket: 'ws://127.0.0.1:9999',
+    appName: 'Payment Application',
+    customRpcMethods: {
+      POST: '/api/book',
+      GET: '/api/book/:id',
+    },
+  };
+  return (
+    <SubstrateConnectionLayout configs={configs} {...args}>
+      <Children />
+    </SubstrateConnectionLayout>
+  );
+};
+```

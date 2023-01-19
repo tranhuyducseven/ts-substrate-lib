@@ -1,2 +1,2 @@
-export { SubstrateConnectionLayout } from './SubstrateConnectionLayout';
-export { ISubstrateContextProps,useSubstrateConnection } from './useSubstrateConnection';
+export { ISubstrateConfigs, SubstrateConnectionLayout } from './SubstrateConnectionLayout';
+export { ISubstrateContextProps, useSubstrateConnection } from './useSubstrateConnection';

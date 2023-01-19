@@ -1,4 +1,3 @@
-import { configs } from '@configs/index';
 import { ApiPromise } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { Keyring } from '@polkadot/ui-keyring';
@@ -9,6 +8,7 @@ import { ISubstrateConnection } from './../global.types';
 interface ISubstrateStore {
   substrateState: ISubstrateConnection;
   setSocket: (socket: string) => void;
+  loadJsonRpc: (customRpcMethods: any) => void;
   handleConnectInit: () => void;
   handleConnect: (api: any) => void;
   handleConnectSuccess: () => void;
@@ -20,7 +20,7 @@ interface ISubstrateStore {
 }
 const initialSubstrateState: ISubstrateConnection = {
   socket: '',
-  jsonrpc: { ...jsonrpc, ...configs.CUSTOM_RPC_METHODS },
+  jsonrpc: { ...jsonrpc },
   keyring: null,
   keyringState: '',
   api: null,
@@ -38,10 +38,15 @@ const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
     set({
       substrateState: { ...get().substrateState, apiState: 'CONNECT_INIT' },
     }),
+  loadJsonRpc: (customRpcMethods: any) =>
+    set({
+      substrateState: { ...get().substrateState, jsonrpc: { ...get().substrateState.jsonrpc, ...customRpcMethods } },
+    }),
   handleConnect: (api: ApiPromise) =>
     set({
       substrateState: { ...get().substrateState, apiState: 'CONNECTING', api },
     }),
+
   handleConnectSuccess: () => set({ substrateState: { ...get().substrateState, apiState: 'READY' } }),
   handleConnectError: (err: any) =>
     set({

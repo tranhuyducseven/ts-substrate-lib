@@ -3,11 +3,16 @@ import React, { useEffect, useState } from 'react';
 
 import { SubstrateProvider } from './SubstrateProvider';
 
-interface SubstrateConnectionLayoutProps {
-  loading?: () => IComponent | JSX.Element | null;
+export interface ISubstrateConfigs {
+  providerSocket?: string;
+  appName?: string;
+  customRpcMethods?: {};
+}
+interface ISubstrateConnectionLayoutProps {
+  configs?: ISubstrateConfigs;
 }
 
-export const SubstrateConnectionLayout: IComponent<SubstrateConnectionLayoutProps> = ({ children, loading }) => {
+export const SubstrateConnectionLayout: IComponent<ISubstrateConnectionLayoutProps> = ({ children, configs }) => {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,7 +21,7 @@ export const SubstrateConnectionLayout: IComponent<SubstrateConnectionLayoutProp
 
   return (
     <div className="substrate-connection-layout">
-      {!isLoading ? <SubstrateProvider>{children}</SubstrateProvider> : <>{loading?.()}</>}
+      {!isLoading ? <SubstrateProvider configs={configs}>{children}</SubstrateProvider> : <></>}
     </div>
   );
 };

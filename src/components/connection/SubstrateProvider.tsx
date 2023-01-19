@@ -1,4 +1,3 @@
-import { configs } from '@configs/index';
 import { API_EVENTS } from '@constants/index';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
@@ -9,15 +8,20 @@ import { useSubstrateStore } from '@states/app';
 import { IComponent } from '@types';
 import React, { useEffect } from 'react';
 
+import { ISubstrateConfigs } from './SubstrateConnectionLayout';
 import { SubstrateContext } from './useSubstrateConnection';
 
 const registry = new TypeRegistry();
 let keyringLoadAll = false;
 
-export const SubstrateProvider: IComponent = ({ children }) => {
+interface ISubstrateProviderProps {
+  configs?: ISubstrateConfigs;
+}
+export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ children, configs }) => {
   const {
     substrateState,
     setSocket,
+    loadJsonRpc,
     handleConnectInit,
     handleConnect,
     handleConnectSuccess,
@@ -63,7 +67,7 @@ export const SubstrateProvider: IComponent = ({ children }) => {
     handleLoadKeyring();
     const asyncLoadAccounts = async () => {
       try {
-        await web3Enable(configs.APP_NAME);
+        await web3Enable(configs?.appName ?? 'ts-substrate-lib');
         let allAccounts = await web3Accounts();
         allAccounts = allAccounts.map((account: any) => {
           const address: any = account.address;
@@ -87,11 +91,16 @@ export const SubstrateProvider: IComponent = ({ children }) => {
     };
     asyncLoadAccounts();
   };
+  useEffect(() => {
+    if (configs?.customRpcMethods) {
+      loadJsonRpc(configs.customRpcMethods);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const parsedQuery = new URLSearchParams(window?.location.search);
-      const connectedSocket = parsedQuery?.get('rpc') || configs.PROVIDER_SOCKET;
+      const connectedSocket = (parsedQuery?.get('rpc') || configs?.providerSocket) ?? 'ws://127.0.0.1:9944';
       setSocket(connectedSocket);
       connectToOffChain();
     }
