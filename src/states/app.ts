@@ -2,11 +2,12 @@ import { configs } from '@configs/index';
 import { ApiPromise } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { Keyring } from '@polkadot/ui-keyring';
-import { ISubstrateContext } from '@types';
 import { create } from 'zustand';
 
+import { ISubstrateConnection } from './../global.types';
+
 interface ISubstrateStore {
-  substrateState: ISubstrateContext;
+  substrateState: ISubstrateConnection;
   setSocket: (socket: string) => void;
   handleConnectInit: () => void;
   handleConnect: (api: any) => void;
@@ -17,7 +18,7 @@ interface ISubstrateStore {
   handleKeyringError: () => void;
   handleSetCurrentAccount: (currentAccount: any) => void;
 }
-export const initialSubstrateState: ISubstrateContext = {
+const initialSubstrateState: ISubstrateConnection = {
   socket: '',
   jsonrpc: { ...jsonrpc, ...configs.CUSTOM_RPC_METHODS },
   keyring: null,

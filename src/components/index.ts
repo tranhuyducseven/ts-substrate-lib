@@ -1,1 +1,1 @@
-export * from './SubstrateContextProvider';
+export * from './connection';

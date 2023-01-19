@@ -9,10 +9,12 @@ import { useSubstrateStore } from '@states/app';
 import { IComponent } from '@types';
 import React, { useEffect } from 'react';
 
+import { SubstrateContext } from './useSubstrateConnection';
+
 const registry = new TypeRegistry();
 let keyringLoadAll = false;
 
-export const SubstrateContextProvider: IComponent = ({ children }) => {
+export const SubstrateProvider: IComponent = ({ children }) => {
   const {
     substrateState,
     setSocket,
@@ -23,6 +25,7 @@ export const SubstrateContextProvider: IComponent = ({ children }) => {
     handleLoadKeyring,
     handleSetKeyring,
     handleKeyringError,
+    handleSetCurrentAccount,
   } = useSubstrateStore();
   const { api, apiState, socket, jsonrpc, keyringState } = substrateState;
   const connectToOffChain = () => {
@@ -100,5 +103,13 @@ export const SubstrateContextProvider: IComponent = ({ children }) => {
     }
   }, [apiState, keyringState]);
 
-  return <div>{children}</div>;
+  const setCurrentAccount = (account: any) => {
+    handleSetCurrentAccount(account);
+  };
+
+  return (
+    <SubstrateContext.Provider value={{ substrateConnection: substrateState, setCurrentAccount }}>
+      {children}
+    </SubstrateContext.Provider>
+  );
 };

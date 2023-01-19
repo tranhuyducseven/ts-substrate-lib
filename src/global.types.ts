@@ -5,7 +5,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { Keyring } from '@polkadot/ui-keyring';
 
-export interface ISubstrateContext {
+export interface ISubstrateConnection {
   socket: string;
   jsonrpc: any;
   keyring: Keyring | null;

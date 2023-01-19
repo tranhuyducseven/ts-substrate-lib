@@ -1,21 +1,22 @@
-import { useSubstrateStore } from '@states/app';
 import { Meta, Story } from '@storybook/react';
 import { IComponent } from '@types';
 import * as React from 'react';
 
-import { SubstrateContextProvider } from '.';
+import { SubstrateProvider } from './SubstrateProvider';
+import { useSubstrateConnection } from './useSubstrateConnection';
 
 export default {
   title: 'Table',
-  component: SubstrateContextProvider,
+  component: SubstrateProvider,
 } as Meta;
 
 export const Children: IComponent = () => {
-  const { substrateState } = useSubstrateStore();
+  const value = useSubstrateConnection();
+  const { substrateConnection } = value;
   React.useEffect(() => {
-    console.log({ substrateState });
-  }, [substrateState]);
-  const msg = substrateState.socket ? `Connected to ${substrateState.socket}` : 'No connected';
+    console.log({ substrateConnection });
+  }, [substrateConnection]);
+  const msg = substrateConnection.socket ? `Connected to ${substrateConnection.socket}` : 'No connected';
   return (
     <div className="bg-amber-500 text-white h-screen w-full flex items-center justify-center font-bold text-lg rounded-lg">
       <span>{msg}</span>
@@ -24,8 +25,8 @@ export const Children: IComponent = () => {
 };
 
 export const TemplateDemo: Story = (args) => (
-  <SubstrateContextProvider {...args}>
+  <SubstrateProvider {...args}>
     <Children />
-  </SubstrateContextProvider>
+  </SubstrateProvider>
 );
 TemplateDemo.args = {};
