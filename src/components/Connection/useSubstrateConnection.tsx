@@ -8,6 +8,6 @@ export interface ISubstrateContextProps {
 
 export const SubstrateContext = createContext<ISubstrateContextProps>({} as ISubstrateContextProps);
 
-export function useSubstrateConnection(): ISubstrateContextProps {
+export const useSubstrateConnection = (): ISubstrateContextProps => {
   return useContext(SubstrateContext);
-}
+};
