@@ -1,4 +1,4 @@
-import { API_EVENTS } from '@constants/index';
+import { API_EVENTS, API_STATES, DEFAULT_SOCKET } from '@constants/index';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { TypeRegistry } from '@polkadot/types';
@@ -100,13 +100,13 @@ export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ childre
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const parsedQuery = new URLSearchParams(window?.location.search);
-      const connectedSocket = (parsedQuery?.get('rpc') || configs?.providerSocket) ?? 'ws://127.0.0.1:9944';
+      const connectedSocket = (parsedQuery?.get('rpc') || configs?.providerSocket) ?? DEFAULT_SOCKET;
       setSocket(connectedSocket);
       connectToOffChain();
     }
   }, [window, socket]);
   useEffect(() => {
-    if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
+    if (apiState === API_STATES.READY && !keyringState && !keyringLoadAll) {
       keyringLoadAll = true;
       loadAccounts();
     }

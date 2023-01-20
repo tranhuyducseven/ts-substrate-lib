@@ -1,9 +1,22 @@
 import { ApiInterfaceEvents } from '@polkadot/api/types';
 
-const API_EVENTS: { [key: string]: ApiInterfaceEvents } = {
+export const DEFAULT_SOCKET = 'ws://127.0.0.1:9944';
+
+export const API_EVENTS: { [key: string]: ApiInterfaceEvents } = {
   CONNECTED: 'connected',
   ERROR: 'error',
   READY: 'ready',
 };
 
-export { API_EVENTS };
+export const API_STATES: { [key: string]: string } = {
+  CONNECT_INIT: 'CONNECT_INIT',
+  CONNECTING: 'CONNECTING',
+  READY: 'READY',
+  ERROR: 'ERROR',
+};
+
+export const KEYRING_STATES: { [key: string]: string } = {
+  LOADING: 'LOADING',
+  READY: 'READY',
+  ERROR: 'ERROR',
+};

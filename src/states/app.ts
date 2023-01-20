@@ -1,3 +1,4 @@
+import { API_STATES, KEYRING_STATES } from '@constants/index';
 import { ApiPromise } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { Keyring } from '@polkadot/ui-keyring';
@@ -36,7 +37,7 @@ const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
   },
   handleConnectInit: () =>
     set({
-      substrateState: { ...get().substrateState, apiState: 'CONNECT_INIT' },
+      substrateState: { ...get().substrateState, apiState: API_STATES.CONNECT_INIT },
     }),
   loadJsonRpc: (customRpcMethods: any) =>
     set({
@@ -44,27 +45,27 @@ const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
     }),
   handleConnect: (api: ApiPromise) =>
     set({
-      substrateState: { ...get().substrateState, apiState: 'CONNECTING', api },
+      substrateState: { ...get().substrateState, apiState: API_STATES.CONNECTING, api },
     }),
 
-  handleConnectSuccess: () => set({ substrateState: { ...get().substrateState, apiState: 'READY' } }),
+  handleConnectSuccess: () => set({ substrateState: { ...get().substrateState, apiState: API_STATES.READY } }),
   handleConnectError: (err: any) =>
     set({
       substrateState: {
         ...get().substrateState,
-        apiState: 'ERROR',
+        apiState: API_STATES.ERROR,
         apiError: err,
       },
     }),
   handleLoadKeyring: () =>
     set({
-      substrateState: { ...get().substrateState, keyringState: 'LOADING' },
+      substrateState: { ...get().substrateState, keyringState: KEYRING_STATES.LOADING },
     }),
   handleSetKeyring: (keyring: Keyring) =>
     set({
       substrateState: {
         ...get().substrateState,
-        keyringState: 'READY',
+        keyringState: KEYRING_STATES.READY,
         keyring,
       },
     }),
@@ -72,7 +73,7 @@ const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
     set({
       substrateState: {
         ...get().substrateState,
-        keyringState: 'ERROR',
+        keyringState: KEYRING_STATES.ERROR,
         keyring: null,
       },
     }),
