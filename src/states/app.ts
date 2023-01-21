@@ -1,23 +1,24 @@
 import { API_STATES, KEYRING_STATES } from '@constants/index';
 import { ApiPromise } from '@polkadot/api';
+import { KeyringPair } from '@polkadot/keyring/types';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { Keyring } from '@polkadot/ui-keyring';
 import { create } from 'zustand';
 
-import { ISubstrateConnection } from './../global.types';
+import { IJsonRpc, ISubstrateConnection } from './../global.types';
 
 interface ISubstrateStore {
   substrateState: ISubstrateConnection;
   setSocket: (socket: string) => void;
-  loadJsonRpc: (customRpcMethods: any) => void;
+  loadJsonRpc: (customRpcMethods: IJsonRpc) => void;
   handleConnectInit: () => void;
-  handleConnect: (api: any) => void;
+  handleConnect: (api: ApiPromise) => void;
   handleConnectSuccess: () => void;
   handleConnectError: (err: any) => void;
   handleLoadKeyring: () => void;
   handleSetKeyring: (keyring: Keyring) => void;
   handleKeyringError: () => void;
-  handleSetCurrentAccount: (currentAccount: any) => void;
+  handleSetCurrentAccount: (currentAccount: KeyringPair) => void;
 }
 const initialSubstrateState: ISubstrateConnection = {
   socket: '',
@@ -39,7 +40,7 @@ const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
     set({
       substrateState: { ...get().substrateState, apiState: API_STATES.CONNECT_INIT },
     }),
-  loadJsonRpc: (customRpcMethods: any) =>
+  loadJsonRpc: (customRpcMethods: IJsonRpc) =>
     set({
       substrateState: { ...get().substrateState, jsonrpc: { ...get().substrateState.jsonrpc, ...customRpcMethods } },
     }),
@@ -77,7 +78,7 @@ const useSubstrateStore = create<ISubstrateStore>((set, get) => ({
         keyring: null,
       },
     }),
-  handleSetCurrentAccount: (currentAccount: any) =>
+  handleSetCurrentAccount: (currentAccount: KeyringPair) =>
     set({ substrateState: { ...get().substrateState, currentAccount } }),
 }));
 

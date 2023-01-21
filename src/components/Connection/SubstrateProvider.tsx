@@ -1,11 +1,12 @@
 import { API_EVENTS, API_STATES, DEFAULT_SOCKET } from '@constants/index';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { KeyringPair } from '@polkadot/keyring/types';
 import { TypeRegistry } from '@polkadot/types';
 import { keyring as Keyring } from '@polkadot/ui-keyring';
 import { isTestChain } from '@polkadot/util';
 import { useSubstrateStore } from '@states/app';
-import { IComponent } from '@types';
+import { IComponent, web3ReturnedAccountsType } from '@types';
 import React, { useEffect } from 'react';
 
 import { ISubstrateConfigs } from './SubstrateConnectionLayout';
@@ -52,11 +53,12 @@ export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ childre
     }
   };
 
-  const retrieveChainInfo = async (api: any) => {
+  const retrieveChainInfo = async (api: ApiPromise) => {
     const [systemChain, systemChainType] = await Promise.all([
       api.rpc.system.chain(),
       api.rpc.system.chainType ? api.rpc.system.chainType() : Promise.resolve(registry.createType('ChainType', 'Live')),
     ]);
+    console.log({ systemChainType });
 
     return {
       systemChain: (systemChain || '<unknown>').toString(),
@@ -69,9 +71,9 @@ export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ childre
       try {
         await web3Enable(configs?.appName ?? 'ts-substrate-lib');
         let allAccounts = await web3Accounts();
-        allAccounts = allAccounts.map((account: any) => {
-          const address: any = account.address;
-          const meta: any = account.meta;
+        allAccounts = allAccounts.map((account: web3ReturnedAccountsType) => {
+          const address = account.address;
+          const meta = account.meta;
           return {
             address,
             meta: { ...meta, name: `${meta.name} (${meta.source})` },
@@ -79,11 +81,13 @@ export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ childre
         });
 
         // Logics to check if the connecting chain is a dev chain
-        const { systemChain, systemChainType } = await retrieveChainInfo(api);
-        const isDevelopment = systemChainType.isDevelopment || systemChainType.isLocal || isTestChain(systemChain);
-
-        Keyring.loadAll({ isDevelopment }, allAccounts);
-        handleSetKeyring(Keyring);
+        if (api !== null) {
+          const { systemChain, systemChainType } = await retrieveChainInfo(api);
+          const isDevelopment =
+            (systemChainType as any).isDevelopment || (systemChainType as any).isLocal || isTestChain(systemChain);
+          Keyring.loadAll({ isDevelopment }, allAccounts);
+          handleSetKeyring(Keyring);
+        }
       } catch (e) {
         console.error(e);
         handleKeyringError();
@@ -112,7 +116,7 @@ export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ childre
     }
   }, [apiState, keyringState]);
 
-  const setCurrentAccount = (account: any) => {
+  const setCurrentAccount = (account: KeyringPair) => {
     handleSetCurrentAccount(account);
   };
 

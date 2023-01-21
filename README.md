@@ -21,15 +21,15 @@
 1. SubstrateState's interface:
 
 ```ts
-interface ISubstrateConnection {
-  socket?: string;
-  jsonrpc?: any;
-  keyring?: any;
-  keyringState?: string | null;
-  api?: any;
-  apiError?: any;
-  apiState?: string | null;
-  currentAccount?: any;
+export interface ISubstrateConnection {
+  socket: string;
+  jsonrpc: IJsonRpc;
+  keyring: Keyring | null;
+  keyringState: string | null;
+  api: ApiPromise | null;
+  apiError: any;
+  apiState: string;
+  currentAccount: KeyringPair | null;
 }
 ```
 
@@ -128,13 +128,24 @@ export const TemplateDemo: Story = (args) => {
 ```ts
 import { ApiInterfaceEvents } from '@polkadot/api/types';
 
-const API_EVENTS: { [key: string]: ApiInterfaceEvents } = {
+export const DEFAULT_SOCKET = 'ws://127.0.0.1:9944';
+
+export const API_EVENTS: { [key: string]: ApiInterfaceEvents } = {
   CONNECTED: 'connected',
   ERROR: 'error',
   READY: 'ready',
 };
-```
 
-```ts
+export const API_STATES: { [key: string]: string } = {
+  CONNECT_INIT: 'CONNECT_INIT',
+  CONNECTING: 'CONNECTING',
+  READY: 'READY',
+  ERROR: 'ERROR',
+};
 
+export const KEYRING_STATES: { [key: string]: string } = {
+  LOADING: 'LOADING',
+  READY: 'READY',
+  ERROR: 'ERROR',
+};
 ```
