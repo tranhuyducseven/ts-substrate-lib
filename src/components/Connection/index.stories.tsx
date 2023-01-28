@@ -5,12 +5,7 @@ import * as React from 'react';
 import { ISubstrateConfigs, SubstrateConnectionLayout } from '.';
 import { useSubstrateConnection } from '.';
 
-export default {
-  title: 'SubstrateConnectionLayout',
-  component: SubstrateConnectionLayout,
-} as Meta;
-
-export const Children: IComponent = () => {
+const Children: IComponent = () => {
   const { substrateConnection } = useSubstrateConnection();
   React.useEffect(() => {
     console.log({ substrateConnection });
@@ -26,7 +21,7 @@ export const Children: IComponent = () => {
   );
 };
 
-export const TemplateDemo: Story = (args) => {
+export const SubstrateConnectionLayoutDemo: Story = (args) => {
   const configs: ISubstrateConfigs = {
     providerSocket: 'ws://127.0.0.1:9944',
     appName: 'Payment Application',
@@ -41,4 +36,10 @@ export const TemplateDemo: Story = (args) => {
     </SubstrateConnectionLayout>
   );
 };
-TemplateDemo.args = {};
+
+SubstrateConnectionLayoutDemo.args = {};
+
+export default {
+  title: 'SubstrateConnectionLayout Demo',
+  component: SubstrateConnectionLayoutDemo,
+} as Meta;

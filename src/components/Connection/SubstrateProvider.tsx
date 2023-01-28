@@ -58,8 +58,6 @@ export const SubstrateProvider: IComponent<ISubstrateProviderProps> = ({ childre
       api.rpc.system.chain(),
       api.rpc.system.chainType ? api.rpc.system.chainType() : Promise.resolve(registry.createType('ChainType', 'Live')),
     ]);
-    console.log({ systemChainType });
-
     return {
       systemChain: (systemChain || '<unknown>').toString(),
       systemChainType,
