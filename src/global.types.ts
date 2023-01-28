@@ -46,3 +46,13 @@ export type ISvgComponent<T = {}> = IComponent<ISvgComponentProps & T>;
 export type IJsonRpc = Record<string, Record<string, DefinitionRpcExt>>;
 
 export type web3ReturnedAccountsType = InjectedAccountWithMeta;
+
+export type TTransactionButton =
+  | 'EXTRINSIC'
+  | 'QUERY'
+  | 'RPC'
+  | 'CONSTANT'
+  | 'SUDO'
+  | 'UNCHECKED_SUDO'
+  | 'UNSIGNED'
+  | 'SIGNED';
