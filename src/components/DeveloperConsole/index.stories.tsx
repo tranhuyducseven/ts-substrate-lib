@@ -2,15 +2,9 @@ import { Meta, Story } from '@storybook/react';
 import { IComponent } from '@types';
 import * as React from 'react';
 
-import { SubstrateConnectionLayout } from '..';
-import { DeveloperConsole } from '.';
+import { DeveloperConsole, SubstrateConnectionLayout } from '..';
 
-export default {
-  title: 'DeveloperConsole',
-  component: DeveloperConsole,
-} as Meta;
-
-export const Children: IComponent = () => {
+const Children: IComponent = () => {
   React.useEffect(() => {
     console.log({ window });
   }, [window]);
@@ -21,7 +15,7 @@ export const Children: IComponent = () => {
   );
 };
 
-export const TemplateDemo: Story = (args) => {
+export const DeveloperConsoleDemo: Story = (args) => {
   return (
     <SubstrateConnectionLayout {...args}>
       <Children />
@@ -29,4 +23,8 @@ export const TemplateDemo: Story = (args) => {
     </SubstrateConnectionLayout>
   );
 };
-TemplateDemo.args = {};
+DeveloperConsoleDemo.args = {};
+export default {
+  title: 'DeveloperConsole Demo',
+  component: DeveloperConsoleDemo,
+} as Meta;
