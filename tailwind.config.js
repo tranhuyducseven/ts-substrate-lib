@@ -1,5 +1,6 @@
+/* eslint @typescript-eslint/no-var-requires: "off" */
 /** @type {import('tailwindcss').Config} */
-const withMT = await import('@material-tailwind/react/utils/withMT');
+const withMT = require('@material-tailwind/react/utils/withMT');
 
 module.exports = withMT({
   content: ['./src/components/**/*.tsx'],
