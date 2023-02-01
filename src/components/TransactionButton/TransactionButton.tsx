@@ -329,16 +329,3 @@ export const TransactionButton: IComponent<ITransactionButtonProps> = ({
     </Button>
   );
 };
-
-// prop type checking
-
-export const TxGroupButton: IComponent = (props: any) => {
-  return (
-    <div>
-      <TransactionButton label="Unsigned" type={INTERACT_TYPE.UNSIGNED} color="indigo" {...props} />
-
-      <TransactionButton label="Signed" type={INTERACT_TYPE.SIGNED} color="blue" {...props} />
-      <TransactionButton label="SUDO" type={INTERACT_TYPE.SUDO} color="red" {...props} />
-    </div>
-  );
-};
