@@ -19542,6 +19542,11 @@ ts-pnp@^1.1.6:
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
 
+ts-substrate-lib@^0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/ts-substrate-lib/-/ts-substrate-lib-0.0.12.tgz#f02a0e7e191fd24b6a39250336eaec6c1981bcf8"
+  integrity sha512-LfS+WNj8ze57byO7hCd9hZBhak773MvCvSY6/6ZhjlqyHWiTphwyRqdx1hVvk4yznIeOuvVAJ6yx2oB2nFW2qg==
+
 tsconfig-paths-webpack-plugin@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths-webpack-plugin/-/tsconfig-paths-webpack-plugin-2.0.0.tgz#7652dc684bb3206c8e7e446831ca01cbf4d11772"
