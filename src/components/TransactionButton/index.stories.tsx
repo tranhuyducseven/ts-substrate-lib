@@ -1,4 +1,3 @@
-// import { TxButton, TxGroupButton } from './substrate-lib/components';
 import { API_STATES, INTERACT_TYPE } from '@constants/index';
 import { Input, Option, Radio, Select, ThemeProvider, Typography } from '@material-tailwind/react';
 import { ApiPromise } from '@polkadot/api';
@@ -9,7 +8,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import { SubstrateConnectionLayout, useSubstrateConnection } from '..';
-import { TransactionButton, TxGroupButton } from './TransactionButton';
+import { TransactionButton } from './TransactionButton';
 
 const argIsOptional = (arg: any) => arg.type.toString().startsWith('Option<');
 
@@ -116,6 +115,18 @@ const CustomInput: IComponent<ICustomInputProps> = ({ placeholder, label, value,
           : undefined
       }
     />
+  );
+};
+
+//Tx Button Group
+const TxGroupButton: IComponent = (props: any) => {
+  return (
+    <div>
+      <TransactionButton label="Unsigned" type={INTERACT_TYPE.UNSIGNED} color="indigo" {...props} />
+
+      <TransactionButton label="Signed" type={INTERACT_TYPE.SIGNED} color="blue" {...props} />
+      <TransactionButton label="SUDO" type={INTERACT_TYPE.SUDO} color="red" {...props} />
+    </div>
   );
 };
 
