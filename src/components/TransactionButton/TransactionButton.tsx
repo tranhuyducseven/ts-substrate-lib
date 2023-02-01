@@ -2,7 +2,7 @@ import { INTERACT_TYPE } from '@constants/index';
 import { Button } from '@material-tailwind/react';
 import { web3FromSource } from '@polkadot/extension-dapp';
 import { IComponent, TTransactionButton } from '@types';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useSubstrateConnection } from '..';
 import utils from './utils';
@@ -50,23 +50,32 @@ export const TransactionButton: IComponent<ITransactionButtonProps> = ({
 
   useEffect(loadSudoKey, [api]);
 
-  const getFromAcct = currentAccount
-    ? async () => {
-        const {
-          address,
-          meta: { source, isInjected },
-        } = currentAccount;
+  const getFromAcct = useCallback(async () => {
+    if (currentAccount) {
+      const {
+        address,
+        meta: { source, isInjected },
+      } = currentAccount;
 
-        if (!isInjected) {
-          return [currentAccount];
-        }
-
-        // currentAccount is injected from polkadot-JS extension, need to return the addr and signer object.
-        // ref: https://polkadot.js.org/docs/extension/cookbook#sign-and-send-a-transaction
-        const injector = await web3FromSource(source as string);
-        return [address, { signer: injector.signer }];
+      if (!isInjected) {
+        const payload = {
+          account: currentAccount,
+          options: null,
+        };
+        return payload;
       }
-    : null;
+
+      // currentAccount is injected from polkadot-JS extension, need to return the addr and signer object.
+      // ref: https://polkadot.js.org/docs/extension/cookbook#sign-and-send-a-transaction
+      const injector = await web3FromSource(source as string);
+      const payload = {
+        account: address,
+        options: { signer: injector.signer },
+      };
+      return payload;
+    }
+    return null;
+  }, [currentAccount]);
 
   const txResHandler = ({ status }: any) =>
     status.isFinalized
@@ -76,43 +85,69 @@ export const TransactionButton: IComponent<ITransactionButtonProps> = ({
   const txErrHandler = (err: any) => setStatus(`😞 Transaction Failed: ${err.toString()}`);
 
   const sudoTx = async () => {
-    if (api && getFromAcct) {
-      const fromAcct = await getFromAcct();
+    if (!api || !getFromAcct) {
+      return;
+    }
+
+    try {
+      const payload = await getFromAcct();
+      if (!payload) {
+        return;
+      }
       const transformed = transformParams(paramFields, inputParams);
-      // transformed can be empty parameters
+      const callableFunction = transformed
+        ? api.tx[palletRpc][callable](...transformed)
+        : api.tx[palletRpc][callable]();
 
-      const txExecute = transformed
-        ? api.tx.sudo.sudo(api.tx[palletRpc][callable](...transformed))
-        : api.tx.sudo.sudo(api.tx[palletRpc][callable]());
-
-      const unSub = txExecute.signAndSend(...fromAcct, txResHandler).catch(txErrHandler);
-
+      const txExecute = api.tx.sudo.sudo(callableFunction);
+      const unSub = payload.options
+        ? await txExecute.signAndSend(payload.account, payload.options, txResHandler)
+        : await txExecute.signAndSend(payload.account, txResHandler);
       setUnSub(() => unSub);
+    } catch (error) {
+      txErrHandler(error);
     }
   };
-
   const uncheckedSudoTx = async () => {
-    if (api && getFromAcct) {
-      const fromAcct = await getFromAcct();
+    if (!api || !getFromAcct) {
+      return;
+    }
+    try {
+      const payload = await getFromAcct();
+      if (!payload) {
+        return;
+      }
       const txExecute = api.tx.sudo.sudoUncheckedWeight(api.tx[palletRpc][callable](...inputParams), 0);
 
-      const unSub = txExecute.signAndSend(...fromAcct, txResHandler).catch(txErrHandler);
+      const unSub = payload.options
+        ? await txExecute.signAndSend(payload.account, payload.options, txResHandler)
+        : await txExecute.signAndSend(payload.account, txResHandler);
 
       setUnSub(() => unSub);
+    } catch (err) {
+      txErrHandler(err);
     }
   };
 
   const signedTx = async () => {
-    if (api && getFromAcct) {
-      const fromAcct = await getFromAcct();
+    if (!api || !getFromAcct) {
+      return;
+    }
+    try {
+      const payload = await getFromAcct();
+      if (!payload) {
+        return;
+      }
       const transformed = transformParams(paramFields, inputParams);
       // transformed can be empty parameters
-
       const txExecute = transformed ? api.tx[palletRpc][callable](...transformed) : api.tx[palletRpc][callable]();
 
-      const unSub = await txExecute.signAndSend(...fromAcct, txResHandler).catch(txErrHandler);
-
+      const unSub = payload.options
+        ? await txExecute.signAndSend(payload.account, payload.options, txResHandler)
+        : await txExecute.signAndSend(payload.account, txResHandler);
       setUnSub(() => unSub);
+    } catch (err) {
+      txErrHandler(err);
     }
   };
 
@@ -191,8 +226,6 @@ export const TransactionButton: IComponent<ITransactionButtonProps> = ({
         asyncFunc = null;
         break;
     }
-
-    console.log({ asyncFunc, type });
 
     await asyncFunc?.();
 
@@ -276,13 +309,6 @@ export const TransactionButton: IComponent<ITransactionButtonProps> = ({
     }
   }, [keyring]);
 
-  console.log({ currentAccount });
-  console.log((type === INTERACT_TYPE.SUDO || type === INTERACT_TYPE.UNCHECKED_SUDO) && !isSudoer(currentAccount));
-  console.log(
-    (type === INTERACT_TYPE.SUDO || type === INTERACT_TYPE.UNCHECKED_SUDO || type === INTERACT_TYPE.SIGNED) &&
-      !currentAccount,
-  );
-  console.log({ type });
   return (
     <Button
       color={color as any}
@@ -310,6 +336,7 @@ export const TxGroupButton: IComponent = (props: any) => {
   return (
     <div>
       <TransactionButton label="Unsigned" type={INTERACT_TYPE.UNSIGNED} color="indigo" {...props} />
+
       <TransactionButton label="Signed" type={INTERACT_TYPE.SIGNED} color="blue" {...props} />
       <TransactionButton label="SUDO" type={INTERACT_TYPE.SUDO} color="red" {...props} />
     </div>
